@@ -2,6 +2,9 @@ quantidade_alunos = int(input("Insira quantos alunos há na classe: \n"))
 quantidade_provas = int(input("Insira quantos trabalhos avaliativos houveram no semestre: \n"))
 nota_max = int(input('Insira a nota máxima do semestre: \n'))
 
+aprovacao = int(input('Insira a porcentagem necessária para a aprovação de um aluno no semestre: \n'))
+aprovacao_porcentagem = aprovacao / 100
+
 lista_alunos = []
 
 # Função que fará o trabalho de compilar os nomes, matriculas e notas dos alunos
@@ -51,6 +54,7 @@ for aluno in lista_alunos:
         if 'Nome' in item: 
             nome = item['Nome']
     if soma_notas > nota_max:
+        
         print('O seguinte aluno está com a nota total maior do que a nota máxima informada para o sistema: ')
         print('Matrícula: {}, nome: {}, com a nota de: {}' .format(matricula, nome, soma_notas))
 
@@ -98,6 +102,55 @@ def notas_aluno(matricula_aluno):
     matricula_aluno = input('Insira a matrícula do aluno que você deseja verificar as notas: \n')
     print(notas_aluno(matricula_aluno))
 
+#Função para verificar a aprovação de um aluno específico
+def aprovacao_aluno (matricula_aluno):
+    for aluno in lista_alunos:
+        for item in aluno:
+            if 'Matricula' in item and item ['Matricula'] == matricula_aluno:
+                for nota in aluno: 
+                    if 'Soma das Ntoas' in nota:
+                        porcentagem = (nota['Soma das Notas']/ nota_max) * 100
+                        if nota['Soma das Notas'] >= nota_max * aprovacao_porcentagem:
+                            return 'O aluno está aprovado com {:.2f}% de média geral no semestre' .format(porcentagem)
+                        else:
+                            return 'O aluno está reprovado com {:.2f}% de média geral no semestre' .format(porcentagem)
+        return 'Aluno não encontrado'
+    
+    matricula_aluno = input('Insira a matrícula do aluno que deseja verificar as notas')
+    print(aprovacao_aluno(matricula_aluno))
+
+#Função para verificar quais alunos foram aprovados e quais foram reprovados
+def aprovados ():
+    resultado = []
+    for aluno in lista_alunos:
+        for item in aluno:
+            if 'Matricula' in item:
+                matricula = item ['Matricula']
+                if 'Nome' in item:
+                    nome = item['Nome']
+                    if 'Soma das Notas' in item:
+                        porcentagem = (item['Soma das Notas'] / nota_max) * 100
+                        if item ['Soma das Notas'] >= nota_max * aprovacao_porcentagem:
+                            resultado.append({'Matricula': matricula, 'Nome': nome, 'Status': 'Aprovado', 'Porcentagem de Média:': f'{porcentagem:.2f}%'})
+                        else: 
+                            resultado.append ({'Matricula': matricula, 'Nome': nome, 'Status': 'Reprovado', 'Porcentagem de Média': f'{porcentagem:.2f}%'})
+        return resultado
+
+#Função para listar apenas alunos reprovados e suas porcentagens
+def reprovados ():
+    reprovados = []
+    for aluno in lista_alunos:
+        for item in aluno:
+            if 'Matricula' in item: 
+                matricula = item['Matricula']
+                if 'Nome' in item: 
+                    nome = item['Nome' ]
+                    if 'Soma das Notas' in item: 
+                        porcentagem = (item['Soma das Notas'] / nota_aluno) *100
+                        if item['Soma das Notas '] < nota_max * aprovacao_porcentagem:
+                            reprovados.append ({'Matricula': matricula, 'Nome': nome, 'Porcentagem de Média:': f'{porcentagem:.2f}%'})
+        return reprovados
+
 #Função para verificação de notas
 verificacao = input('Deseja verificar alguma nota? \n [Sim/Nao] \n')
 verificacao = verificacao.upper()
@@ -109,7 +162,10 @@ if verificacao == 'SIM':
     '2 - Verificar todas as notas de um aluno',
     '3 - Verificar todas as notas da sala', 
     '4 - Verificar a média geral da sala',
-    '5 - Verificar média de aluno especifico'
+    '5 - Verificar média de aluno especifico',
+    '6 - Verificar alunos aprovados e reprovados',
+    '7 - Verificar se um aluno especifico está aprovado'
+    '8 - Verificar alunos reprovados',
     ]
     print(opcoes)
     while True:
@@ -128,6 +184,15 @@ if verificacao == 'SIM':
             break
         elif selecao == 5:
             media_aluno()
+            break
+        elif selecao == 6:
+            aprovados ()
+            break
+        elif selecao == 7:
+            aprovacao_aluno ()
+            break
+        elif selecao == 8:
+            reprovados()
             break
         else:
             print('Opção inválida!')
